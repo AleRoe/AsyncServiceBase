@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>AsyncServiceBase</id>
+    <version>1.0.0</version>
+    <title>AsyncServiceBase</title>
+    <authors>Alexander Röthinger</authors>
+    <owners>Alexander Röthinger</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/AleRoe/AsyncServiceBase/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/AleRoe/AsyncServiceBase</projectUrl>
+    <description>An abstract implementation of System.ServiceProcess.ServiceBase aimed at implementing Task-based Windows Services.</description>
+    <copyright>Copyright © Alexander Röthinger</copyright>
+    <tags>ServiceBase, Windows Service, async, async-await</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.7.2">
+        <dependency id="Nito.AsyncEx" version="5.0.0" />
+        <dependency id="Nito.AsyncEx.Context" version="5.0.0" />
+        <dependency id="Nito.AsyncEx.Coordination" version="5.0.0" />
+        <dependency id="Nito.AsyncEx.Interop.WaitHandles" version="5.0.0" />
+        <dependency id="Nito.AsyncEx.Oop" version="5.0.0" />
+        <dependency id="Nito.AsyncEx.Tasks" version="5.0.0" />
+        <dependency id="Nito.Cancellation" version="1.0.5" />
+        <dependency id="Nito.Collections.Deque" version="1.0.4" />
+        <dependency id="Nito.Disposables" version="2.0.0" />
+        <dependency id="System.Collections.Immutable" version="1.5.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="C:\Users\Alexander\Source\Repos\AsyncServiceBase\src\AsyncService\bin\Debug\AsyncService.dll" target="lib\net472\AsyncService.dll" exclude="" />
+    <file src="C:\Users\Alexander\Source\Repos\AsyncServiceBase\src\AsyncService\bin\Debug\AsyncService.pdb" target="lib\net472\AsyncService.pdb" exclude="" />
+  </files>
+</package>
