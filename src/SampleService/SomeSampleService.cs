@@ -4,7 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SampleApp
+namespace SampleService
 {
     partial class SomeSampleService : AsyncServiceBase
     {
@@ -13,12 +13,14 @@ namespace SampleApp
             InitializeComponent();
         }
 
-        public override async Task RunServiceAsync(string[] args, CancellationToken cancellationToken = default(CancellationToken), PauseToken pauseToken = default(PauseToken))
+        //your task-based service implementation goes here
+        public override async Task RunServiceAsync(string[] args, CancellationToken cancellationToken, PauseToken pauseToken)
         {
             //define some task
             var task = SomeLongRunningTask(cancellationToken, pauseToken);
-            // WaitAsync for completion without blocking ServiceBase.OnStart 
-            await task.WaitAsync(cancellationToken);
+
+            //await completion
+            await task;
         }
 
         private async Task SomeLongRunningTask(CancellationToken cancellationToken, PauseToken pauseToken)

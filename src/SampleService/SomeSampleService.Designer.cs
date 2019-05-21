@@ -1,4 +1,4 @@
-﻿namespace SampleApp
+﻿namespace SampleService
 {
     partial class SomeSampleService
     {

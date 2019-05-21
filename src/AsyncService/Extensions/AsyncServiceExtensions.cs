@@ -9,15 +9,28 @@ namespace AsyncService.Extensions
 {
     internal static class AsyncServiceExtensions
     {
+        /// <summary>
+        /// Runs the given <see cref="AsyncServiceBase"/> service interactively
+        /// </summary>
+        /// <param name="service">The <see cref="AsyncServiceBase"/> service to run.</param>
+        /// <param name="args">Commandline arguments passed to the service.</param>
         internal static void Run(this AsyncServiceBase service, string[] args)
         {
+            if (!Environment.UserInteractive)
+                throw new NotSupportedException("Not running in UserInteractive mode.");
+            
             var thread = new AsyncContextThread();
-            var task = thread.Factory.Run(() => RunServiceAsync(service, args));
+            var task = thread.Factory.Run(() => RunAsync(service, args));
             task.Wait();
             thread.Join();
         }
 
-        private static async Task RunServiceAsync(AsyncServiceBase service, string[] args)
+        /// <summary>
+        /// Execution task for the service
+        /// </summary>
+        /// <param name="service">The <see cref="AsyncServiceBase"/> service to run.</param>
+        /// <param name="args">Commandline arguments passed to the service.</param>
+        private static async Task RunAsync(AsyncServiceBase service, string[] args)
         {
             Console.WriteLine("Running interactive");
 
@@ -56,12 +69,23 @@ namespace AsyncService.Extensions
             Console.ReadKey(true);
         }
 
+        /// <summary>
+        /// Handles Service faults by displaying the exception
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Service_Faulted(object sender, AsyncServiceFaultedEventArgs e)
         {
             var service = (AsyncServiceBase)sender;
             Console.WriteLine($"Faulted: {e.Fault.Message} ExitCode: {service.ExitCode}");
         }
 
+        /// <summary>
+        /// Handle KeyPressed
+        /// </summary>
+        /// <param name="keyInfo"></param>
+        /// <param name="service"></param>
+        /// <param name="args"></param>
         private static void HandleKeyPressed(ConsoleKeyInfo keyInfo, AsyncServiceBase service, string[] args)
         {
             if (keyInfo.Key == ConsoleKey.P & service.Status == AsyncServiceStatus.Running)
@@ -82,12 +106,18 @@ namespace AsyncService.Extensions
             }
         }
 
+        /// <summary>
+        /// Handle ServiceStatus changes
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Service_StatusChanged(object sender, AsyncServiceStatusChangedEventArgs e)
         {
             var instance = (AsyncServiceBase)sender;
 
             Console.WriteLine($"Status: {instance.Status}");
 
+            Console.ForegroundColor = ConsoleColor.White;
             if (instance.Status == AsyncServiceStatus.Running & instance.CanPauseAndContinue)
             {
                 Console.WriteLine("Press 'P' to pause, 'S' to stop or 'Ctrl-C' to quit...");
@@ -104,28 +134,47 @@ namespace AsyncService.Extensions
             {
                 Console.WriteLine("Press 'R' to run or 'Ctrl-C' to quit...");
             }
+            Console.ResetColor();
         }
 
         
-
+        /// <summary>
+        /// Helper method to access ServiceBase protected member
+        /// </summary>
+        /// <param name="serviceInstance"></param>
+        /// <param name="args"></param>
         private static void Start(this ServiceBase serviceInstance, string[] args)
         { 
             serviceInstance.GetType().
                 InvokeMember("OnStart", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance, null, serviceInstance, new object[] { args });
         }
 
+        /// <summary>
+        /// Helper method to access ServiceBase protected member
+        /// </summary>
+        /// <param name="serviceInstance"></param>
         private static void Pause(this ServiceBase serviceInstance)
         {
             serviceInstance.GetType().
                 InvokeMember("OnPause", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance, null, serviceInstance, new object[] {});
         }
 
+        /// <summary>
+        /// Helper method to access ServiceBase protected member
+        /// </summary>
+        /// <param name="serviceInstance"></param>
         private static void Continue(this ServiceBase serviceInstance)
         {
             serviceInstance.GetType().
                 InvokeMember("OnContinue", BindingFlags.InvokeMethod | BindingFlags.NonPublic | BindingFlags.Instance, null, serviceInstance, new object[] { });
         }
 
+        /// <summary>
+        /// Non-blocking Console.ReadKey
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <param name="responsiveness"></param>
+        /// <returns></returns>
         private static async Task<ConsoleKeyInfo> ReadKeyAsync(CancellationToken cancellationToken, int responsiveness = 100)
         {
             try
