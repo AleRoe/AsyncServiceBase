@@ -1,16 +1,16 @@
-﻿using System;
+﻿using AsyncService.Extensions;
+using Nito.AsyncEx;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
-using Nito.AsyncEx;
-using AsyncService.Extensions;
 
 namespace AsyncService
 {
     /// <summary>
-    ///An abstract implementation of <see cref="System.ServiceProcess.ServiceBase"/> aimed at running a Task-based Windows Service.
+    /// An abstract implementation of <see cref="System.ServiceProcess.ServiceBase"/> aimed at running a Task-based Windows Service.
     /// </summary>
     [TypeDescriptionProvider(typeof(AbstractTypeDescriptionProvider<AsyncServiceBase, ServiceBase>))]
     public abstract class AsyncServiceBase : ServiceBase
@@ -141,18 +141,20 @@ namespace AsyncService
         private void HandleException(Exception exception)
         {
             if (exception is AggregateException)
-            {
                 exception = exception.InnerException;
-            }
+            
 
             // set the Exitcode so that SCM can perform recovery
             this.ExitCode = 1066; // The service has returned a service-specific error code.
 
-            // log the Task exception, details depending on IncludeExceptionDetailsInEventLog
-            var message = IncludeExceptionDetailsInEventLog ? exception?.ToString() : exception?.Message;
-            EventLog.WriteEntry(message, EventLogEntryType.Error);
-            
-            OnFaulted(new AsyncServiceFaultedEventArgs(exception));
+            if (exception != null)
+            {
+                // log the Task exception, details depending on IncludeExceptionDetailsInEventLog
+                var message = IncludeExceptionDetailsInEventLog ? exception.ToString() : exception.Message;
+                EventLog.WriteEntry(message, EventLogEntryType.Error);
+
+                OnFaulted(new AsyncServiceFaultedEventArgs(exception));
+            }
 
             //Stop the service
             Stop();
@@ -166,6 +168,7 @@ namespace AsyncService
         protected override void OnPause()
         {
 #if (DEBUG)
+            // only valid during DEBUG as SCM will not call OnPause if PauseAndContinue is not set.
             if (!this.CanPauseAndContinue)
                 throw new NotSupportedException("Service is not configured to support PauseAndContinue.");
 #endif
@@ -192,6 +195,7 @@ namespace AsyncService
         protected override void OnContinue()
         {
 #if (DEBUG)
+            // only valid during DEBUG as SCM will not call OnContinue if PauseAndContinue is not set.
             if (!this.CanPauseAndContinue)
                 throw new NotSupportedException("Service is not configured to support PauseAndContinue.");
 #endif
@@ -220,12 +224,14 @@ namespace AsyncService
             {
                 this.Status = AsyncServiceStatus.StopPending;
 
+                // we only need to cancel the task if it hasn't already been cancelled
                 if (!_runTask.IsCompleted)
                 {
                     Debug.WriteLine("Cancelling RunTask...");
                     _cts.Cancel();
                 }
 
+                // await the end of all asynchronous tasks
                 Debug.WriteLine("Thread.JoinAsync()");
                 _contextThread.JoinAsync().GetAwaiter().GetResult();
             }
@@ -243,7 +249,7 @@ namespace AsyncService
         /// <summary>
         /// Invokes StatusChanged event
         /// </summary>
-        /// <remarks>Deliberately not async as used only for testing purposes</remarks>        
+        /// <remarks>Deliberately not async as used only for interactive testing</remarks>        
         /// <param name="e"></param>
         protected void OnStatusChanged(AsyncServiceStatusChangedEventArgs e)
         {
@@ -253,7 +259,7 @@ namespace AsyncService
         /// <summary>
         /// Invokes Faulted event
         /// </summary>
-        /// <remarks>Deliberately not async as used only for testing purposes</remarks>        
+        /// <remarks>Deliberately not async as used only for interactive testing</remarks>        
         /// <param name="e"></param>
         protected void OnFaulted(AsyncServiceFaultedEventArgs e)
         {

@@ -1,11 +1,11 @@
 # AsyncServiceBase
-An abstract implementation of System.ServiceProcess.ServiceBase aimed at running a Task-based Windows Service, including interactive testing facilities.
+An abstract implementation of [System.ServiceProcess.ServiceBase](https://docs.microsoft.com/en-us/dotnet/api/system.serviceprocess.servicebase) aimed at implementing Task-based Windows Services, including interactive testing facilities.
 
 Supports `.NET Framework 4.7.2`
 
 ## Getting started
 
-`AsyncServiceBase` is an abstraction layer around System.ServiceProcess.ServiceBase wich provides a single abstract method RunServiceAsync() to run any Task-related work.
+`AsyncServiceBase` is an abstraction layer around System.ServiceProcess.ServiceBase wich provides a single abstract method **RunServiceAsync()** to run any Task-related work.
 
 ```C#
 //your task-based service implementation goes here

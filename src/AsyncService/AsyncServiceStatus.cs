@@ -1,5 +1,8 @@
 ﻿namespace AsyncService
 {
+    /// <summary>
+    /// Internal <see cref="AsyncServiceBase"/> service states
+    /// </summary>
     public enum AsyncServiceStatus
     {
         ContinuePending = 5,

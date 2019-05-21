@@ -65,7 +65,7 @@ namespace AsyncService.Extensions
 
             Console.WriteLine();
             Console.WriteLine($"Service ended with ExitCode {service.ExitCode}");
-            Console.WriteLine("Press any key to exit");
+            Console.WriteLine("Press any key to quit");
             Console.ReadKey(true);
         }
 

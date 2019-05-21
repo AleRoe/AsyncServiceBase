@@ -11,6 +11,7 @@ namespace SampleService
         public SomeSampleService()
         {
             InitializeComponent();
+            this.IncludeExceptionDetailsInEventLog = true;
         }
 
         //your task-based service implementation goes here

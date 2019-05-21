@@ -33,7 +33,6 @@
             // 
             this.CanPauseAndContinue = true;
             this.ServiceName = "SomeSampleService";
-
         }
 
         #endregion
