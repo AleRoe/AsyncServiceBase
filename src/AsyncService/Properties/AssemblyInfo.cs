@@ -6,9 +6,9 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("AsyncService")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Provides a ServiceBase implementation targeted at async services")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Alexander Röthinger")]
 [assembly: AssemblyProduct("AsyncService")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Die folgende GUID bestimmt die ID der Typbibliothek, wenn dieses Projekt für COM verfügbar gemacht wird
-[assembly: Guid("bbcb86e6-0b4a-4c7c-a0bf-6806336a3597")]
+[assembly: Guid("f7bac56c-7141-4a7a-8e4f-2941d2946990")]
 
 // Versionsinformationen für eine Assembly bestehen aus den folgenden vier Werten:
 //
